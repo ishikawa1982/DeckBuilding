@@ -1,0 +1,18 @@
+{
+  "name": "スパイアの残響",
+  "short_name": "スパイア",
+  "description": "スマホで遊べるデッキ構築型ローグライク",
+  "start_url": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#12101c",
+  "theme_color": "#12101c",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
