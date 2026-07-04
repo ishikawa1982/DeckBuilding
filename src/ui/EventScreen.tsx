@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import type { RunState } from '../game/types'
 import type { GameEvent, EventChoice } from '../game/events'
+import { PixelBg } from '../gfx/PixelBg'
+import { Sprite } from '../gfx/Sprite'
+import { EVENT_ICONS, NODE_ICONS } from '../gfx/sprites'
 import { CardView } from './CardView'
 
 interface Props {
@@ -15,13 +18,14 @@ export function EventScreen({ event, run, onChoose }: Props) {
   if (removing) {
     return (
       <div className="screen event-screen">
-        <h2 className="screen-title">🗿 除去するカードを選ぼう</h2>
+        <PixelBg kind="room" />
+        <h2 className="screen-title">除去するカードを選ぼう</h2>
         <div className="deck-grid">
           {run.deck.map((card) => (
             <CardView key={card.uid} card={card} small onClick={() => onChoose(removing, card.uid)} />
           ))}
         </div>
-        <button className="btn" onClick={() => setRemoving(null)}>
+        <button className="btn btn-small" onClick={() => setRemoving(null)}>
           戻る
         </button>
       </div>
@@ -30,7 +34,8 @@ export function EventScreen({ event, run, onChoose }: Props) {
 
   return (
     <div className="screen event-screen">
-      <div className="event-art">{event.emoji}</div>
+      <PixelBg kind="room" />
+      <Sprite sprite={EVENT_ICONS[event.id] ?? NODE_ICONS.event} scale={8} animMs={0} />
       <h2 className="screen-title">{event.title}</h2>
       <p className="event-text">{event.text}</p>
       <div className="event-choices">

@@ -1,3 +1,5 @@
+import { PixelBg } from '../gfx/PixelBg'
+
 interface Props {
   hasSave: boolean
   onNewRun: () => void
@@ -7,20 +9,22 @@ interface Props {
 export function TitleScreen({ hasSave, onNewRun, onContinue }: Props) {
   return (
     <div className="screen title-screen">
-      <div className="title-art">🗼</div>
-      <h1 className="title-name">スパイアの残響</h1>
-      <p className="title-sub">デッキ構築型ローグライク</p>
-      <div className="title-buttons">
-        <button className="btn btn-primary" onClick={onNewRun}>
-          新しい冒険
-        </button>
-        {hasSave && (
-          <button className="btn" onClick={onContinue}>
-            続きから
+      <PixelBg kind="title" />
+      <div className="title-content">
+        <h1 className="title-name">スパイアの残響</h1>
+        <p className="title-sub">- PIXEL ROGUELIKE -</p>
+        <div className="title-buttons">
+          <button className="btn btn-primary blink" onClick={onNewRun}>
+            ▶ 新しい冒険
           </button>
-        )}
+          {hasSave && (
+            <button className="btn" onClick={onContinue}>
+              続きから
+            </button>
+          )}
+        </div>
+        <p className="title-hint">カードを集め、塔の頂の「深淵の王」を倒せ</p>
       </div>
-      <p className="title-hint">カードを集め、塔の頂の「深淵の王」を倒せ</p>
     </div>
   )
 }

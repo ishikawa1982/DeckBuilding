@@ -1,3 +1,7 @@
+import { PixelBg } from '../gfx/PixelBg'
+import { Sprite } from '../gfx/Sprite'
+import { HERO_SPRITE, NODE_ICONS } from '../gfx/sprites'
+
 interface Props {
   victory: boolean
   onBackToTitle: () => void
@@ -6,8 +10,11 @@ interface Props {
 export function EndScreen({ victory, onBackToTitle }: Props) {
   return (
     <div className="screen end-screen">
-      <div className="end-art">{victory ? '🏆' : '☠️'}</div>
-      <h1 className="screen-title">{victory ? '塔を制覇した!' : '冒険はここで終わった'}</h1>
+      <PixelBg kind={victory ? 'title' : 'room'} />
+      <Sprite sprite={victory ? HERO_SPRITE : NODE_ICONS.elite} scale={victory ? 8 : 9} animMs={600} />
+      <h1 className={`end-title${victory ? '' : ' end-title-defeat'}`}>
+        {victory ? '塔を制覇した!' : '冒険はここで終わった'}
+      </h1>
       <p className="screen-sub">
         {victory
           ? '深淵の王は倒れ、塔に静寂が戻った。'
