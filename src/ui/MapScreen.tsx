@@ -5,7 +5,9 @@ import { RELICS } from '../game/relics'
 import { PixelBg } from '../gfx/PixelBg'
 import { Sprite } from '../gfx/Sprite'
 import { NODE_ICONS, RELIC_SPRITES } from '../gfx/sprites'
+import { sfx } from '../audio/sfx'
 import { DeckOverlay } from './DeckOverlay'
+import { SoundToggle } from './SoundToggle'
 
 interface Props {
   run: RunState
@@ -69,9 +71,16 @@ export function MapScreen({ run, onSelectNode, onAbandon }: Props) {
             </span>
           ))}
         </span>
-        <button className="btn btn-small" onClick={() => setShowDeck(true)}>
+        <button
+          className="btn btn-small"
+          onClick={() => {
+            sfx.click()
+            setShowDeck(true)
+          }}
+        >
           デッキ {run.deck.length}
         </button>
+        <SoundToggle />
       </header>
 
       <div className="map-scroll" ref={scrollRef}>
@@ -123,7 +132,10 @@ export function MapScreen({ run, onSelectNode, onAbandon }: Props) {
                           .filter(Boolean)
                           .join(' ')}
                         disabled={!canSelect}
-                        onClick={() => onSelectNode(node.id)}
+                        onClick={() => {
+                          sfx.nodeSelect()
+                          onSelectNode(node.id)
+                        }}
                         aria-label={`${node.row + 1}階 ${node.type}`}
                       >
                         <Sprite
@@ -143,7 +155,13 @@ export function MapScreen({ run, onSelectNode, onAbandon }: Props) {
 
       <footer className="map-footer">
         <span className="map-help">光るマスをタップして進もう</span>
-        <button className="btn btn-small btn-danger" onClick={onAbandon}>
+        <button
+          className="btn btn-small btn-danger"
+          onClick={() => {
+            sfx.click()
+            onAbandon()
+          }}
+        >
           冒険を諦める
         </button>
       </footer>
