@@ -8,6 +8,8 @@ import { rollRewardCards, CARDS } from './game/cards'
 import { rollRelic } from './game/relics'
 import { makeRand } from './game/rng'
 import { pickEvent, type GameEvent, type EventChoice } from './game/events'
+import { audio } from './audio/engine'
+import { music } from './audio/music'
 import { TitleScreen } from './ui/TitleScreen'
 import { MapScreen } from './ui/MapScreen'
 import { CombatScreen } from './ui/CombatScreen'
@@ -33,6 +35,20 @@ export default function App() {
   useEffect(() => {
     setHasSave(loadRun() !== null)
   }, [])
+
+  // 最初のタップ/クリックでAudioContextの自動再生制限を解除する
+  useEffect(() => {
+    const unlock = () => audio.unlock()
+    window.addEventListener('pointerdown', unlock, { capture: true })
+    return () => window.removeEventListener('pointerdown', unlock, { capture: true })
+  }, [])
+
+  // 画面に応じてBGMを切り替える(reward/victory/defeatは直前の曲の余韻に任せる)
+  useEffect(() => {
+    if (screen === 'title') music.play('title')
+    else if (screen === 'map' || screen === 'rest' || screen === 'event') music.play('map')
+    else if (screen === 'combat') music.play('combat')
+  }, [screen])
 
   // マップ画面に戻るたびにセーブ
   useEffect(() => {

@@ -1,4 +1,6 @@
 import { PixelBg } from '../gfx/PixelBg'
+import { sfx } from '../audio/sfx'
+import { SoundToggle } from './SoundToggle'
 
 interface Props {
   hasSave: boolean
@@ -10,15 +12,28 @@ export function TitleScreen({ hasSave, onNewRun, onContinue }: Props) {
   return (
     <div className="screen title-screen">
       <PixelBg kind="title" />
+      <SoundToggle corner />
       <div className="title-content">
         <h1 className="title-name">スパイアの残響</h1>
         <p className="title-sub">- PIXEL ROGUELIKE -</p>
         <div className="title-buttons">
-          <button className="btn btn-primary blink" onClick={onNewRun}>
+          <button
+            className="btn btn-primary blink"
+            onClick={() => {
+              sfx.click()
+              onNewRun()
+            }}
+          >
             ▶ 新しい冒険
           </button>
           {hasSave && (
-            <button className="btn" onClick={onContinue}>
+            <button
+              className="btn"
+              onClick={() => {
+                sfx.click()
+                onContinue()
+              }}
+            >
               続きから
             </button>
           )}

@@ -142,6 +142,13 @@ canvas {
   letter-spacing: 1px;
 }
 
+.sound-toggle-corner {
+  position: absolute;
+  top: calc(10px + env(safe-area-inset-top));
+  right: calc(10px + env(safe-area-inset-right));
+  z-index: 6;
+}
+
 .btn-danger {
   background: #7a2438;
   box-shadow:

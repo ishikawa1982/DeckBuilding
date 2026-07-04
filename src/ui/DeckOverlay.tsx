@@ -1,4 +1,5 @@
 import type { CardInstance } from '../game/types'
+import { sfx } from '../audio/sfx'
 import { CardView } from './CardView'
 
 interface Props {
@@ -7,8 +8,12 @@ interface Props {
 }
 
 export function DeckOverlay({ deck, onClose }: Props) {
+  const close = () => {
+    sfx.click()
+    onClose()
+  }
   return (
-    <div className="overlay" onClick={onClose}>
+    <div className="overlay" onClick={close}>
       <div className="overlay-box overlay-deck" onClick={(e) => e.stopPropagation()}>
         <h2>デッキ({deck.length}枚)</h2>
         <div className="deck-grid">
@@ -16,7 +21,7 @@ export function DeckOverlay({ deck, onClose }: Props) {
             <CardView key={card.uid} card={card} small />
           ))}
         </div>
-        <button className="btn" onClick={onClose}>
+        <button className="btn" onClick={close}>
           閉じる
         </button>
       </div>

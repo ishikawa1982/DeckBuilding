@@ -14,7 +14,10 @@ import {
   NODE_ICONS,
   RELIC_SPRITES,
 } from '../gfx/sprites'
+import { sfx } from '../audio/sfx'
+import { music } from '../audio/music'
 import { CardView } from './CardView'
+import { SoundToggle } from './SoundToggle'
 
 interface Props {
   combat: CombatState
@@ -156,17 +159,21 @@ export function CombatScreen({
       newFx.push({ kind: 'dmg', value: prev.player.hp - combat.player.hp, target: 'player' })
       setPlayerAnim('hit')
       setShaking(true)
+      sfx.playerHit()
       later(360, () => setPlayerAnim(''))
       later(400, () => setShaking(false))
     } else if (combat.player.hp > prev.player.hp) {
       newFx.push({ kind: 'heal', value: combat.player.hp - prev.player.hp, target: 'player' })
+      sfx.heal()
     }
     if (action === 'card' && combat.player.block > prev.player.block) {
       newFx.push({ kind: 'block', value: combat.player.block - prev.player.block, target: 'player' })
+      sfx.block()
     }
 
     if (newFx.length > 0) addFx(newFx)
     if (hits.length > 0) {
+      hits.forEach(() => sfx.hit())
       setEnemyAnims((cur) => {
         const next = { ...cur }
         for (const slot of hits) next[slot] = 'hit'
@@ -182,7 +189,15 @@ export function CombatScreen({
     }
     if (dying.length > 0) {
       setDyingSlots((cur) => new Set([...cur, ...dying]))
+      dying.forEach(() => later(80, () => sfx.death()))
     }
+
+    if (combat.outcome === 'victory' && prev.outcome === 'ongoing') {
+      music.playOnce('victory')
+    } else if (combat.outcome === 'defeat' && prev.outcome === 'ongoing') {
+      music.playOnce('defeat')
+    }
+
     lastActionRef.current = null
   }, [combat, addFx, later])
 
@@ -194,9 +209,15 @@ export function CombatScreen({
 
   const playWithFx = (uid: number, targetSlot?: number) => {
     const card = combat.hand.find((c) => c.uid === uid)
-    if (card && getCardDef(card).type === 'attack') {
+    const def = card ? getCardDef(card) : null
+    if (def?.type === 'attack') {
       setPlayerAnim('attacking')
+      sfx.attack()
       later(380, () => setPlayerAnim(''))
+    } else if (def?.type === 'power') {
+      sfx.power()
+    } else if (def) {
+      sfx.skill()
     }
     lastActionRef.current = 'card'
     onPlayCard(uid, targetSlot)
@@ -216,6 +237,7 @@ export function CombatScreen({
         playWithFx(card.uid)
       }
     } else {
+      sfx.cardSelect()
       setSelectedUid(card.uid)
     }
   }
@@ -228,6 +250,7 @@ export function CombatScreen({
   }
 
   const handleEndTurn = () => {
+    sfx.turnEnd()
     lastActionRef.current = 'endturn'
     // 攻撃意図の敵に突進モーション
     const attackers = aliveEnemies
@@ -265,6 +288,7 @@ export function CombatScreen({
             </span>
           ))}
         </span>
+        <SoundToggle />
       </header>
 
       <div className={`combat-main${shaking ? ' shake' : ''}`}>
@@ -399,7 +423,13 @@ export function CombatScreen({
             <h2 className="screen-title">
               {combat.outcome === 'victory' ? '勝利!' : '倒れてしまった…'}
             </h2>
-            <button className="btn btn-primary" onClick={onFinished}>
+            <button
+              className="btn btn-primary"
+              onClick={() => {
+                sfx.click()
+                onFinished()
+              }}
+            >
               {combat.outcome === 'victory' ? '報酬を見る' : '結果へ'}
             </button>
           </div>
